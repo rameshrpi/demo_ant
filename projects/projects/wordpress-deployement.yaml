@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      containers:
+      - name: wordpress
+        image: wordpress:latest
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: mysql-service
+        - name: WORDPRESS_DB_USER
+          valueFrom:
+            secretKeyRef: 
+              name: mysql-secret 
+              key: mysql-database
+          volumeMounts: 
+        - mountPath: /var/www/html 
+          name: wordpress-storage 
+          volumes: 
+          - name: wordpress-storage 
+          persistentVolumeClaim: 
+          claimName: wordpress-pvc
